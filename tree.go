@@ -62,6 +62,7 @@ func main() {
 	tree.add(14)
 	tree.add(13)
 
-	fmt.Println(tree)
-	fmt.Println(tree.find(136))
+	fmt.Printf("%+v\n", tree)
+	fmt.Printf("%+v\n", tree.find(13))
+	fmt.Printf("%+v\n", tree.find(6))
 }
