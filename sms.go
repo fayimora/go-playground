@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"encoding/json"
 	"os"
+	"io/ioutil"
 )
 
 var (
@@ -17,25 +18,24 @@ var (
 
 func genMessageReader() strings.Reader {
 	message := url.Values{}
-	message.Set("TO", "+")
-	message.Set("FROM", "+")
-	message.Set("Body", "Initial message!")
+	message.Set("To", "+TO_NUM")
+	message.Set("From", "Golang")
+	message.Set("Body", "Hello there!")
 	reader :=  *strings.NewReader(message.Encode())
 	return reader
 }
 
 func SendSms() {
-	client := &http.Client{}
 	reader := genMessageReader()
 	smsEndpoint := fmt.Sprintf("%s/Accounts/%s/Messages", BaseUrl, AccountSid)
 	fmt.Printf("smsEndpoint: %s\n", smsEndpoint)
-	//res, _ := client.PostForm(smsEndpoint, reader)
 
 	req, _ := http.NewRequest("POST", smsEndpoint, &reader)
 	req.SetBasicAuth(AccountSid, AuthToken)
 	req.Header.Add("Accept", "application/json")
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
+	client := &http.Client{}
 	res, _ := client.Do(req)
 	fmt.Println()
 	if res.StatusCode >= 200 && res.StatusCode < 300 {
@@ -47,6 +47,8 @@ func SendSms() {
 		}
 	} else {
 		fmt.Printf("Something went wrong! Code: %d\n", res.StatusCode)
+		bytes, _ := ioutil.ReadAll(res.Body)
+		fmt.Println(string(bytes))
 		fmt.Println(res.Status)
 	}
 }
